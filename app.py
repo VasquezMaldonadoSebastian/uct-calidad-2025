@@ -396,11 +396,11 @@ st.markdown(f"""
         <small>Evaluación Anual de Indicadores 2025</small>
     </div>
     <div class="navbar-nav">
-        <a href="?tab=IND-PS-0001" class="nav-indps0001 {'active' if tab_actual=='IND-PS-0001' else ''}">IND-PS-0001 Eficacia NC</a>
-        <a href="?tab=Todos" class="nav-todos {'active' if tab_actual=='Todos' else ''}">Todos los Indicadores</a>
-        <a href="?tab=Satisfaccion" class="nav-satisfaccion {'active' if tab_actual=='Satisfaccion' else ''}">Satisfacción</a>
-        <a href="?tab=Quejas" class="nav-quejas {'active' if tab_actual=='Quejas' else ''}">Quejas</a>
-        <a href="?tab=Requisitos" class="nav-requisitos {'active' if tab_actual=='Requisitos' else ''}">Requisitos Legales</a>
+        <a href="#" onclick="window.location.href='?tab=IND-PS-0001'; return false;" class="nav-indps0001 {'active' if tab_actual=='IND-PS-0001' else ''}">IND-PS-0001 Eficacia NC</a>
+        <a href="#" onclick="window.location.href='?tab=Todos'; return false;" class="nav-todos {'active' if tab_actual=='Todos' else ''}">Todos los Indicadores</a>
+        <a href="#" onclick="window.location.href='?tab=Satisfaccion'; return false;" class="nav-satisfaccion {'active' if tab_actual=='Satisfaccion' else ''}">Satisfacción</a>
+        <a href="#" onclick="window.location.href='?tab=Quejas'; return false;" class="nav-quejas {'active' if tab_actual=='Quejas' else ''}">Quejas</a>
+        <a href="#" onclick="window.location.href='?tab=Requisitos'; return false;" class="nav-requisitos {'active' if tab_actual=='Requisitos' else ''}">Requisitos Legales</a>
     </div>
 </div>
 """, unsafe_allow_html=True)
