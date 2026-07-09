@@ -377,33 +377,73 @@ requisitos = parse_requisitos(data)
 
 
 # ══════════════════════════════════════════════════
-#  NAVBAR SUPERIOR
+#  NAVBAR SUPERIOR — Streamlit nativo
 # ══════════════════════════════════════════════════
 params = st.query_params
 tab_actual = params.get("tab", "IND-PS-0001")
 
+# Brand header
 st.markdown(f"""
-<style>
-    .nav-indps0001 {{ border-bottom-color: {C['accent']} !important; color: {C['accent']} !important; background: {C['accent_light']}; }}
-    .nav-todos {{ border-bottom-color: {C['accent']} !important; color: {C['accent']} !important; background: {C['accent_light']}; }}
-    .nav-satisfaccion {{ border-bottom-color: {C['accent']} !important; color: {C['accent']} !important; background: {C['accent_light']}; }}
-    .nav-quejas {{ border-bottom-color: {C['accent']} !important; color: {C['accent']} !important; background: {C['accent_light']}; }}
-    .nav-requisitos {{ border-bottom-color: {C['accent']} !important; color: {C['accent']} !important; background: {C['accent_light']}; }}
-</style>
-<div class="navbar">
-    <div class="navbar-brand">
-        🎓 UCT — SIAC
-        <small>Evaluación Anual de Indicadores 2025</small>
-    </div>
-    <div class="navbar-nav">
-        <a href="#" onclick="window.location.href='?tab=IND-PS-0001'; return false;" class="nav-indps0001 {'active' if tab_actual=='IND-PS-0001' else ''}">IND-PS-0001 Eficacia NC</a>
-        <a href="#" onclick="window.location.href='?tab=Todos'; return false;" class="nav-todos {'active' if tab_actual=='Todos' else ''}">Todos los Indicadores</a>
-        <a href="#" onclick="window.location.href='?tab=Satisfaccion'; return false;" class="nav-satisfaccion {'active' if tab_actual=='Satisfaccion' else ''}">Satisfacción</a>
-        <a href="#" onclick="window.location.href='?tab=Quejas'; return false;" class="nav-quejas {'active' if tab_actual=='Quejas' else ''}">Quejas</a>
-        <a href="#" onclick="window.location.href='?tab=Requisitos'; return false;" class="nav-requisitos {'active' if tab_actual=='Requisitos' else ''}">Requisitos Legales</a>
-    </div>
+<div style="background:{C['surface']}; border-bottom:1px solid {C['border']};
+            padding:14px 24px; margin:-1rem -1rem 0 -1rem; box-shadow:0 1px 3px rgba(0,0,0,0.04);
+            display:flex; align-items:center;">
+    <span style="font-size:17px; font-weight:700; color:{C['heading']};">🎓 UCT — SIAC</span>
+    <span style="font-size:11px; color:{C['body']}; margin-left:12px;">Evaluación Anual de Indicadores 2025</span>
 </div>
 """, unsafe_allow_html=True)
+
+# Tab selector using st.radio (works natively in Streamlit)
+tab_options = {
+    "IND-PS-0001 Eficacia NC": "IND-PS-0001",
+    "Todos los Indicadores": "Todos",
+    "Satisfacción": "Satisfaccion",
+    "Quejas": "Quejas",
+    "Requisitos Legales": "Requisitos",
+}
+tab_labels = list(tab_options.keys())
+# Find current index
+current_index = 0
+for i, (label, value) in enumerate(tab_options.items()):
+    if value == tab_actual:
+        current_index = i
+        break
+
+st.markdown(f"""
+<style>
+    div[data-baseweb="radio-group"] {{
+        background: {C['surface']};
+        border-bottom: 1px solid {C['border']};
+        padding: 0 20px;
+        margin: 0 -1rem 1.5rem -1rem;
+    }}
+    div[data-baseweb="radio-group"] label {{
+        padding: 12px 16px !important;
+        margin: 0 !important;
+        border-bottom: 2px solid transparent !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        color: {C['body']} !important;
+    }}
+    div[data-baseweb="radio-group"] label[data-checked="true"] {{
+        color: {C['accent']} !important;
+        border-bottom-color: {C['accent']} !important;
+        font-weight: 600 !important;
+        background: {C['accent_light']} !important;
+    }}
+</style>
+""", unsafe_allow_html=True)
+
+selected_tab = st.radio(
+    "Navegación",
+    tab_labels,
+    index=current_index,
+    horizontal=True,
+    label_visibility="collapsed",
+    key="nav_tab",
+)
+
+# Update tab_actual based on selection
+tab_actual = tab_options[selected_tab]
 
 
 # ══════════════════════════════════════════════════
