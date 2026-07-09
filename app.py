@@ -116,12 +116,12 @@ st.markdown(f"""
         font-weight: 600;
     }}
 
-    /* ─── KPI cards ─── */
+    /* ─── KPI cards compactas ─── */
     .kpi-card {{
         background: {C['surface']};
         border: 1px solid {C['border']};
-        border-radius: 8px;
-        padding: 18px 20px;
+        border-radius: 6px;
+        padding: 10px 12px;
         box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         text-align: center;
         transition: box-shadow 0.15s ease;
@@ -129,9 +129,9 @@ st.markdown(f"""
     .kpi-card:hover {{
         box-shadow: 0 2px 8px rgba(79,107,237,0.08);
     }}
-    .kpi-value {{ font-size: 28px; font-weight: 700; color: {C['heading']}; letter-spacing: -0.5px; }}
-    .kpi-label {{ font-size: 12px; color: {C['body']}; margin-top: 4px; font-weight: 500; }}
-    .kpi-delta {{ font-size: 11px; margin-top: 4px; }}
+    .kpi-value {{ font-size: 22px; font-weight: 700; color: {C['heading']}; letter-spacing: -0.5px; }}
+    .kpi-label {{ font-size: 11px; color: {C['body']}; margin-top: 2px; font-weight: 500; }}
+    .kpi-delta {{ font-size: 10px; margin-top: 2px; }}
 
     /* ─── Secciones ─── */
     .visual-title {{
@@ -141,8 +141,9 @@ st.markdown(f"""
     }}
     .section-divider {{ border-top: 1px solid {C['border']}; margin: 16px 0; }}
 
-    /* ─── Espaciado entre gráficos ─── */
-    .stPlotlyChart {{ margin-top: 12px; margin-bottom: 12px; }}
+    /* ─── Espaciado generoso entre gráficos ─── */
+    .stPlotlyChart {{ margin-top: 24px; margin-bottom: 24px; }}
+    .stPlotlyChart + .stPlotlyChart {{ margin-top: 32px; }}
 
     /* ─── Tabla Streamlit sin scroll, texto ajustado ─── */
     div[data-testid="stDataFrame"] {{ max-height: none !important; overflow: visible !important; }}
@@ -488,10 +489,33 @@ def make_plotly_base(title=""):
         plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(gridcolor=C["border_soft"], tickfont=dict(color=C["body"])),
         yaxis=dict(gridcolor=C["border_soft"], tickfont=dict(color=C["body"])),
-        margin=dict(l=50, r=20, t=30, b=50),
+        margin=dict(l=60, r=30, t=36, b=60),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=11)),
     )
     return fig
+
+
+def dataframe_to_html(df, max_col_width=200):
+    """Convierte DataFrame a tabla HTML con word-wrap nativo (sin scroll)."""
+    rows_html = ""
+    for _, row in df.iterrows():
+        cells = "".join(f'<td style="padding:6px 10px; border-bottom:1px solid {C["border"]}; '
+                       f'font-size:11px; color:{C["label"]}; '
+                       f'word-wrap:break-word; overflow-wrap:break-word; white-space:normal; '
+                       f'max-width:{max_col_width}px; line-height:1.4;">'
+                       f'{str(v) if pd.notna(v) else "—"}</td>'
+                       for v in row)
+        rows_html += f"<tr>{cells}</tr>\n"
+    headers = "".join(f'<th style="background:{C["accent"]}; color:white; padding:8px 10px; '
+                      f'text-align:left; font-weight:600; font-size:11px; '
+                      f'white-space:nowrap; position:sticky; top:0; z-index:2;">{col}</th>'
+                      for col in df.columns)
+    return f"""<div style="overflow-x:auto; border:1px solid {C["border"]}; border-radius:8px;">
+    <table style="width:100%; border-collapse:collapse; table-layout:auto;">
+        <thead>{headers}</thead>
+        <tbody>{rows_html}</tbody>
+    </table>
+</div>"""
 
 
 # ══════════════════════════════════════════════════
@@ -597,7 +621,7 @@ if tab_actual == "IND-PS-0001":
         plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Inter, sans-serif", size=12, color=C["body"]),
         legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="right", x=1),
-        margin=dict(l=50, r=20, t=30, b=40), height=350,
+        margin=dict(l=60, r=30, t=36, b=50), height=380,
     )
     st.plotly_chart(fig_trend, use_container_width=True)
 
@@ -630,7 +654,7 @@ if tab_actual == "IND-PS-0001":
         )])
         fig_dona.update_layout(
             plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-            showlegend=False, margin=dict(l=10, r=10, t=10, b=10), height=280,
+            showlegend=False, margin=dict(l=20, r=20, t=20, b=20), height=320,
             annotations=[dict(text=f'<b>{eficaz}</b><br>eficaces', x=0.5, y=0.5, font_size=14, showarrow=False, font_color=C["heading"])],
         )
         st.plotly_chart(fig_dona, use_container_width=True)
@@ -659,7 +683,7 @@ if tab_actual == "IND-PS-0001":
             plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)",
             font=dict(family="Inter, sans-serif", size=12, color=C["body"]),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-            margin=dict(l=50, r=20, t=30, b=50), height=400, bargap=0.35,
+            margin=dict(l=60, r=30, t=36, b=60), height=420, bargap=0.45,
         )
         st.plotly_chart(fig_bar, use_container_width=True)
 
@@ -682,7 +706,7 @@ if tab_actual == "IND-PS-0001":
             plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)",
             font=dict(family="Inter, sans-serif", size=12, color=C["body"]),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-            margin=dict(l=50, r=20, t=30, b=50), height=340, bargap=0.3,
+            margin=dict(l=60, r=30, t=36, b=60), height=380, bargap=0.4,
         )
         st.plotly_chart(fig_stack, use_container_width=True)
 
@@ -708,7 +732,12 @@ elif tab_actual == "Todos":
     st.markdown(section_title("📋 Indicadores de Desempeño Operacional — IND-PS-0006"), unsafe_allow_html=True)
     df_show = df_ind6[["codigo", "nombre", "direccion", "periodicidad", "meta_tipo", "meta", "promedio", "resultado_2025", "cumple", "observaciones"]].copy()
     df_show.columns = ["Código", "Nombre", "Dirección", "Período", "Meta", "Meta %", "Promedio", "Resultado 2025", "Cumple", "Observaciones"]
-    st.dataframe(df_show, use_container_width=True, hide_index=True, height=None)
+    # Formatear columnas numéricas
+    for col in ["Meta %", "Promedio", "Resultado 2025"]:
+        if col in df_show.columns:
+            df_show[col] = df_show[col].apply(lambda x: f"{x:.1f}%" if pd.notna(x) else "—")
+    df_show["Cumple"] = df_show["Cumple"].apply(lambda x: "✅ Sí" if x == True else ("❌ No" if x == False else "—"))
+    st.markdown(dataframe_to_html(df_show, max_col_width=250), unsafe_allow_html=True)
 
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
@@ -729,8 +758,8 @@ elif tab_actual == "Todos":
             plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)",
             font=dict(family="Inter, sans-serif", size=11, color=C["body"]),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-            margin=dict(l=50, r=20, t=30, b=80), height=450,
-            xaxis=dict(tickangle=-45),
+            margin=dict(l=60, r=30, t=36, b=100), height=480,
+            xaxis=dict(tickangle=-45, tickfont=dict(size=10)),
         )
         st.plotly_chart(fig_all, use_container_width=True)
 
@@ -783,7 +812,7 @@ elif tab_actual == "Satisfaccion":
         xaxis=dict(title="%", range=[0, 110], gridcolor=C["border_soft"]),
         plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Inter, sans-serif", size=12, color=C["body"]),
-        margin=dict(l=250, r=40, t=20, b=40), height=450,
+        margin=dict(l=280, r=50, t=24, b=50), height=500,
     )
     st.plotly_chart(fig_sat, use_container_width=True)
 
@@ -821,7 +850,7 @@ elif tab_actual == "Quejas":
         plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Inter, sans-serif", size=12, color=C["body"]),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        margin=dict(l=50, r=20, t=30, b=50), height=400,
+        margin=dict(l=60, r=30, t=36, b=60), height=420, bargap=0.3,
     )
     st.plotly_chart(fig_q, use_container_width=True)
 
